@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using CouponAPI.Data;
 using CouponAPI.Models;
 using CouponAPI.Models.Dto;
@@ -15,11 +16,13 @@ namespace CouponAPI.Controllers
     {
         private readonly AppDbContext _db;
         private ResponseDto _response;
+        private IMapper _mapper;
 
-        public CouponApiController(AppDbContext db)
+        public CouponApiController(AppDbContext db, IMapper mapper)
         {
             _db = db;
             _response = new ResponseDto();
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -28,14 +31,13 @@ namespace CouponAPI.Controllers
             try
             {
                 IEnumerable<Coupon> objList = _db.Coupons.ToList();
-                _response.Result =  objList;
+                _response.Result =  _mapper.Map<IEnumerable<Coupon>>(objList);
             }
             catch (Exception ex)
             {
                 _response.IsSuccess = false;
                 _response.Message = ex.Message;
             }
-
             return _response;
         }
 
@@ -46,14 +48,13 @@ namespace CouponAPI.Controllers
             try
             {
                 Coupon obj = _db.Coupons.First(u => u.CouponId ==id);
-                _response.Result =  obj;
+                _response.Result =  _mapper.Map<CouponDto>(obj);
             }
             catch (Exception ex)
             {
                 _response.IsSuccess = false;
                 _response.Message = ex.Message;
             }
-
             return _response;
         }
 
