@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CouponAPI.Data;
 using CouponAPI.Models;
+using CouponAPI.Models.Dto;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CouponAPI.Controllers
@@ -13,39 +14,47 @@ namespace CouponAPI.Controllers
     public class CouponApiController : ControllerBase
     {
         private readonly AppDbContext _db;
+        private ResponseDto _response;
 
         public CouponApiController(AppDbContext db)
         {
             _db = db;
+            _response = new ResponseDto();
         }
 
         [HttpGet]
-        public object Get()
+        public ResponseDto Get()
         {
             try
             {
                 IEnumerable<Coupon> objList = _db.Coupons.ToList();
-                return objList;
+                _response.Result =  objList;
             }
             catch (Exception ex)
             {
-                return null;
+                _response.IsSuccess = false;
+                _response.Message = ex.Message;
             }
+
+            return _response;
         }
 
         [HttpGet]
         [Route("{id:int}")]
-        public object Get(int id)
+        public ResponseDto Get(int id)
         {
             try
             {
                 Coupon obj = _db.Coupons.First(u => u.CouponId ==id);
-                return obj;
+                _response.Result =  obj;
             }
             catch (Exception ex)
             {
-                return NotFound("Coupon not found!");
+                _response.IsSuccess = false;
+                _response.Message = ex.Message;
             }
+
+            return _response;
         }
 
     }
