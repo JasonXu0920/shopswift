@@ -114,5 +114,22 @@ namespace CouponAPI.Controllers
             }
             return _response;
         }
+
+        [HttpDelete]
+        public ResponseDto Delete(int id)
+        {
+            try
+            {   
+                Coupon obj = _db.Coupons.First(u=>u.CouponId==id);
+                _db.Coupons.Remove(obj);
+                _db.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.Message = ex.Message;
+            }
+            return _response;
+        }
     }
 }
